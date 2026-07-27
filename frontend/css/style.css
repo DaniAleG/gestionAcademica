@@ -1,0 +1,158 @@
+/* ============================================
+   Sistema de Gestión Académica - Estilos generales
+   (Misma paleta que ya tenía el proyecto: azul, verde y rojo)
+   ============================================ */
+
+:root {
+    --azul-oscuro: #0056b3;
+    --azul-medio:  #007bff;
+    --azul-claro:  #4dabf7;
+    --verde-accion: #28a745;
+    --verde-accion-hover: #218838;
+    --rojo-accion: #dc3545;
+    --rojo-accion-hover: #b52a37;
+    --fondo-gris: #f4f4f9;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    background-color: var(--fondo-gris);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+}
+
+/* ---------- Login ---------- */
+.login-container {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    max-width: 380px;
+    margin: 12vh auto;
+    border-top: 4px solid var(--azul-medio);
+}
+
+/* ---------- Sidebar ---------- */
+#sidebar {
+    min-width: 260px;
+    max-width: 260px;
+    background-color: var(--azul-oscuro);
+    color: #fff;
+    height: 100vh;
+    width: 260px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+}
+
+#sidebar hr { border-color: var(--azul-medio); opacity: 0.5; }
+
+#sidebar .menu-item {
+    color: #dceeff;
+    text-decoration: none;
+    display: block;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+#sidebar .menu-item:hover,
+#sidebar .menu-item.activo {
+    background-color: var(--azul-medio);
+    color: #fff;
+    transform: translateX(5px);
+}
+
+/* ---------- Contenido principal ---------- */
+#content {
+    width: 100%;
+    min-height: 100vh;
+    margin-left: 260px;
+    transition: margin-left 0.3s ease;
+}
+
+/* ---------- Botón hamburguesa (móvil / colapsado) ---------- */
+#sidebar-toggle {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 1055;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    font-size: 1.25rem;
+    line-height: 1;
+    border: none;
+    background-color: var(--azul-medio);
+    color: #fff;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+}
+#sidebar-toggle:hover { background-color: var(--azul-oscuro); }
+
+#sidebar-hover-zone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 100vh;
+    z-index: 1032;
+    background: transparent;
+}
+
+#sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1035;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+body.sidebar-hidden #sidebar { transform: translateX(-100%); }
+body.sidebar-hidden #content { margin-left: 0; }
+body.sidebar-hidden #sidebar-backdrop { opacity: 0; pointer-events: none; }
+
+@media (max-width: 991.98px) {
+    #sidebar-toggle { display: inline-flex; }
+    #sidebar-hover-zone { display: none; }
+    #sidebar { transform: translateX(-100%); }
+    body.sidebar-visible #sidebar { transform: translateX(0); }
+    body.sidebar-visible #sidebar-backdrop { opacity: 1; pointer-events: auto; }
+    #content { margin-left: 0; padding-top: 62px; }
+    body.sidebar-visible { overflow: hidden; }
+}
+
+/* ---------- Tarjetas de contenido ---------- */
+.card-acento {
+    border-top: 4px solid var(--azul-medio);
+}
+
+/* ---------- Botones de acción ---------- */
+.btn-guardar {
+    background-color: var(--verde-accion);
+    border-color: var(--verde-accion);
+}
+.btn-guardar:hover {
+    background-color: var(--verde-accion-hover);
+    border-color: var(--verde-accion-hover);
+}
+
+/* ---------- Tabla ---------- */
+.table thead.table-azul th {
+    background-color: var(--azul-oscuro);
+    color: #fff;
+    border-color: var(--azul-oscuro);
+}
+
+.acciones a { margin-right: 10px; text-decoration: none; font-weight: 600; }
+.acciones a.editar { color: var(--azul-medio); }
+.acciones a.eliminar { color: var(--rojo-accion); }
