@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', function () {
     modalAlumno = new bootstrap.Modal(document.getElementById('modalAlumno'));
     cargarAlumnos();
 
+    if (ROL_USUARIO !== 'admin') {
+        document.getElementById('btn-nuevo-alumno').style.display = 'none';
+    }
+    
     document.getElementById('form-alumno').addEventListener('submit', guardarAlumno);
 
     ['cedula', 'nombre', 'apellido', 'correo', 'fecha_nacimiento'].forEach(function (id) {
