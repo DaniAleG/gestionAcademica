@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
     modalMatricula = new bootstrap.Modal(document.getElementById('modalMatricula'));
     cargarSelects();
     cargarMatriculas();
+    if (ROL_USUARIO !== 'admin') {
+        document.getElementById('btn-nuevo-matriculas').style.display = 'none';
+    }
     document.getElementById('form-matricula').addEventListener('submit', guardarMatricula);
 });
 
