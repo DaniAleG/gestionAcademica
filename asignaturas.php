@@ -29,7 +29,7 @@ requerirSesion();
                 <div class="card shadow-sm">
                     <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
                         <span>Asignaturas Registradas</span>
-                        <button type="button" class="btn btn-guardar text-white btn-sm" onclick="abrirModalNuevo()">+ Nueva Asignatura</button>
+                        <button id= "btn-nuevo-asignatura" type="button" class="btn btn-guardar text-white btn-sm" onclick="abrirModalNuevo()">+ Nueva Asignatura</button>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
