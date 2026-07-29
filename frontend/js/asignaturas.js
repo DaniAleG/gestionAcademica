@@ -39,10 +39,12 @@ async function cargarAsignaturas() {
                 <td>${escapeHtml(a.nombre)}</td>
                 <td>${a.creditos}</td>
                 <td>${escapeHtml(a.nombre_titulacion)}</td>
+                ${ROL_USUARIO === 'admin' ? `
                 <td class="text-center acciones">
                     <a href="#" class="editar" onclick='abrirModalEditar(${a.id_asignatura}, ${JSON.stringify(a)}); return false;'>Editar</a>
                     <a href="#" class="eliminar" onclick="eliminarAsignatura(${a.id_asignatura}); return false;">Eliminar</a>
                 </td>
+                ` : ''}
             </tr>
         `).join('');
     } catch (err) {
