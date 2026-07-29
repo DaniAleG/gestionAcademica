@@ -103,5 +103,6 @@ requerirSesion();
 <script src="frontend/js/api-utils.js"></script>
 <script src="frontend/js/validaciones.js"></script>
 <script src="frontend/js/matriculas.js"></script>
+<script>const ROL_USUARIO = "<?= htmlspecialchars($_SESSION['rol'] ?? '') ?>";</script>
 </body>
 </html>
