@@ -21,13 +21,6 @@ function requerirSesionApi(): void
     }
 }
 /** Corta la ejecución con 403 si el rol de la sesión no está en la lista permitida. */
-function requerirRolApi(array $rolesPermitidos): void
-{
-    $rol = $_SESSION['rol'] ?? '';
-    if (!in_array($rol, $rolesPermitidos, true)) {
-        responderError('No tienes permisos para realizar esta acción.', 403);
-    }
-}
 
 /** Devuelve un JSON de éxito y termina la ejecución. */
 function responderExito($datos = [], string $mensaje = 'Operación realizada correctamente'): void
