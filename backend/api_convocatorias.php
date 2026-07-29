@@ -24,6 +24,15 @@ function validarConvocatoria(array $d, array $tiposValidos): array
     if (!in_array($tipo, $tiposValidos, true)) {
         responderError('El tipo de evaluación no es válido.', 422);
     }
+    $fechaExamenValida = DateTime::createFromFormat('Y-m-d', $fecha_examen);
+    if (!$fechaExamenValida) {
+        responderError('La fecha de examen no es válida.', 422);
+    }
+    if ($fechaExamenValida < new DateTime('today')) {
+        responderError('La fecha de examen no puede ser una fecha pasada.', 422);
+    }
+
+    return ['id_asignatura' => (int)$id_asignatura, 'fecha_examen' => $fecha_examen, 'tipo' => $tipo];
 
     return ['id_asignatura' => (int)$id_asignatura, 'fecha_examen' => $fecha_examen, 'tipo' => $tipo];
 }
