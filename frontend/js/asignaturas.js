@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', function () {
     modalAsignatura = new bootstrap.Modal(document.getElementById('modalAsignatura'));
     cargarTitulacionesEnSelect();
     cargarAsignaturas();
+
+    if (ROL_USUARIO !== 'admin') {
+        document.getElementById('btn-nuevo-asignatura').style.display = 'none';
+    }
     document.getElementById('form-asignatura').addEventListener('submit', guardarAsignatura);
 });
 
