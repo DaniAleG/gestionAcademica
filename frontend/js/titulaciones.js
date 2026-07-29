@@ -4,6 +4,9 @@ let modalTitulacion;
 document.addEventListener('DOMContentLoaded', function () {
     modalTitulacion = new bootstrap.Modal(document.getElementById('modalTitulacion'));
     cargarTitulaciones();
+    if (ROL_USUARIO !== 'admin') {
+        document.getElementById('btn-nuevo-titulacion').style.display = 'none';
+    }
     document.getElementById('form-titulacion').addEventListener('submit', guardarTitulacion);
 });
 
