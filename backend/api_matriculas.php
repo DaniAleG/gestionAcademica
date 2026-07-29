@@ -5,9 +5,7 @@ session_start();
 require_once __DIR__ . '/includes/api_helpers.php';
 require_once __DIR__ . '/conexion.php';
 requerirSesionApi();
-if (in_array($metodo, ['POST', 'PUT', 'DELETE'], true)) {
-    requerirRolApi(['admin']);
-}
+
 
 $metodo = $_SERVER['REQUEST_METHOD'];
 $estadosValidos = ['Activa', 'Inactiva', 'Retirada'];
