@@ -29,7 +29,7 @@ requerirSesion();
                 <div class="card shadow-sm">
                     <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
                         <span>Alumnos Matriculados</span>
-                        <button type="button" class="btn btn-guardar text-white btn-sm" onclick="abrirModalNuevo()">+ Nuevo Alumno</button>
+                        <button id="btn-nuevo-alumno" type="button" class="btn btn-guardar text-white btn-sm" onclick="abrirModalNuevo()">+ Nuevo Alumno</button>
                     </div>
                     <div class="card-body">
                         <input type="text" id="buscador" class="form-control mb-3" placeholder="Buscar por cédula, nombre, apellido o correo...">
