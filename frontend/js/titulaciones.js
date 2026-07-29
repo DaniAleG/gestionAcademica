@@ -23,10 +23,12 @@ async function cargarTitulaciones() {
                 <td>${t.id_titulacion}</td>
                 <td>${escapeHtml(t.nombre)}</td>
                 <td>${escapeHtml(t.descripcion || 'N/A')}</td>
+                ${ROL_USUARIO === 'admin' ? `
                 <td class="text-center acciones">
                     <a href="#" class="editar" onclick='abrirModalEditar(${t.id_titulacion}, ${JSON.stringify(t)}); return false;'>Editar</a>
                     <a href="#" class="eliminar" onclick="eliminarTitulacion(${t.id_titulacion}); return false;">Eliminar</a>
                 </td>
+                ` : ''}
             </tr>
         `).join('');
     } catch (err) {
