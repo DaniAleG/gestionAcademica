@@ -43,8 +43,10 @@ async function cargarAlumnos(busqueda = '') {
                 <td>${escapeHtml(a.correo)}</td>
                 <td>${escapeHtml(a.fecha_nacimiento)}</td>
                 <td class="text-center acciones">
-                    <a href="#" class="editar" onclick="abrirModalEditar(${a.id_alumno}, ${JSON.stringify(a).replace(/"/g, '&quot;')}); return false;">Editar</a>
-                    <a href="#" class="eliminar" onclick="eliminarAlumno(${a.id_alumno}); return false;">Eliminar</a>
+                    ${ROL_USUARIO === 'admin' ? `
+                        <a href="#" class="editar" onclick="abrirModalEditar(${a.id_alumno}, ${JSON.stringify(a).replace(/"/g, '&quot;')}); return false;">Editar</a>
+                        <a href="#" class="eliminar" onclick="eliminarAlumno(${a.id_alumno}); return false;">Eliminar</a>
+                    ` : ''}
                 </td>
             </tr>
         `).join('');
