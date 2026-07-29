@@ -2,6 +2,10 @@
 session_start();
 require_once 'includes/helpers.php';
 requerirSesion();
+if (($_SESSION['rol'] ?? '') !== 'admin') {
+    header('Location: panel_principal.php');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
