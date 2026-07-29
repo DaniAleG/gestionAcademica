@@ -38,6 +38,10 @@ function validarAlumno(array $d, PDO $pdo, ?int $idExcluir = null): array
     if (!$fechaValida || $fechaValida > new DateTime()) {
         responderError('La fecha de nacimiento no es válida.', 422);
     }
+    $edad = $fechaValida->diff(new DateTime())->y;
+    if ($edad < 16 || $edad > 100) {
+        responderError('La edad del alumno debe estar entre 16 y 100 años.', 422);
+    }
 
     $sql = 'SELECT id_alumno FROM alumno WHERE (cedula = :cedula OR correo = :correo)';
     if ($idExcluir !== null) {
