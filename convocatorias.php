@@ -100,5 +100,6 @@ if (($_SESSION['rol'] ?? '') !== 'admin') {
 <script src="frontend/js/api-utils.js"></script>
 <script src="frontend/js/validaciones.js"></script>
 <script src="frontend/js/convocatorias.js"></script>
+<script>const ROL_USUARIO = "<?= htmlspecialchars($_SESSION['rol'] ?? '') ?>";</script>
 </body>
 </html>
