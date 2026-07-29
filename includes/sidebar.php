@@ -42,11 +42,13 @@ $paginaActual = basename($_SERVER['SCRIPT_NAME']);
                 📝 Matrículas
             </a>
         </li>
-        <li class="nav-item mb-2">
-            <a href="convocatorias.php" class="nav-link menu-item <?php echo $paginaActual === 'convocatorias.php' ? 'activo' : ''; ?>">
-                📅 Convocatorias
-            </a>
-        </li>
+        <?php if (($_SESSION['rol'] ?? '') === 'admin'): ?>
+            <li class="nav-item mb-2">
+                <a href="convocatorias.php" class="nav-link menu-item <?php echo $paginaActual === 'convocatorias.php' ? 'activo' : ''; ?>">
+                    📅 Convocatorias
+                </a>
+            </li>
+        <?php endif; ?>
     </ul>
 
     <hr>
