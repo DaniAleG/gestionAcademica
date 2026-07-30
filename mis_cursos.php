@@ -73,7 +73,7 @@ requerirRol(['maestro']);
                                 </tbody>
                             </table>
                         </div>
-                        <p class="text-muted small mt-2 mb-0">Escribe una nota entre 0 y 10 y presiona Enter (o haz clic fuera del campo) para guardarla.</p>
+                        
                     </div>
                 </div>
             </div>
