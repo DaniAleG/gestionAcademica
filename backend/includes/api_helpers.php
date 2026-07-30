@@ -20,6 +20,7 @@ function requerirSesionApi(): void
         responderError('Debes iniciar sesión.', 401);
     }
 }
+/** Corta la ejecución con 403 si el rol de la sesión no está en la lista permitida. */
 
 /** Corta la ejecución con 403 si el rol de la sesión no está en la lista permitida. */
 function requerirRolApi(array $rolesPermitidos): void
