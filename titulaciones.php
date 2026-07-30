@@ -2,6 +2,7 @@
 session_start();
 require_once 'includes/helpers.php';
 requerirSesion();
+requerirRol(['admin']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -29,7 +30,7 @@ requerirSesion();
                 <div class="card shadow-sm">
                     <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
                         <span>Titulaciones Registradas</span>
-                        <button type="button" class="btn btn-guardar text-white btn-sm" onclick="abrirModalNuevo()">+ Nueva Titulación</button>
+                        <button id="btn-nuevo-titulacion" type="button" class="btn btn-guardar text-white btn-sm" onclick="abrirModalNuevo()">+ Nueva Titulación</button>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -85,5 +86,6 @@ requerirSesion();
 <script src="frontend/js/api-utils.js"></script>
 <script src="frontend/js/validaciones.js"></script>
 <script src="frontend/js/titulaciones.js"></script>
+<script>const ROL_USUARIO = "<?= htmlspecialchars($_SESSION['rol'] ?? '') ?>";</script>
 </body>
 </html>

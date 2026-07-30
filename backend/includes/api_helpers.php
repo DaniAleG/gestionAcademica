@@ -21,6 +21,15 @@ function requerirSesionApi(): void
     }
 }
 
+/** Corta la ejecución con 403 si el rol de la sesión no está en la lista permitida. */
+function requerirRolApi(array $rolesPermitidos): void
+{
+    $rol = $_SESSION['rol'] ?? '';
+    if (!in_array($rol, $rolesPermitidos, true)) {
+        responderError('No tienes permisos para realizar esta acción.', 403);
+    }
+}
+
 /** Devuelve un JSON de éxito y termina la ejecución. */
 function responderExito($datos = [], string $mensaje = 'Operación realizada correctamente'): void
 {
@@ -100,4 +109,22 @@ function normalizarNombre(string $valor): string
 function normalizarTexto(string $valor): string
 {
     return preg_replace('/\s+/u', ' ', trim($valor)) ?? '';
+}
+
+/**
+ * Valida una fecha de nacimiento (formato Y-m-d) y que la edad resultante
+ * esté dentro de un rango razonable. Corta la ejecución con 422 si falla.
+ * Devuelve el objeto DateTime ya validado.
+ */
+function validarFechaNacimiento(string $fecha, int $edadMinima, int $edadMaxima): DateTime
+{
+    $fechaValida = DateTime::createFromFormat('Y-m-d', $fecha);
+    if (!$fechaValida || $fechaValida->format('Y-m-d') !== $fecha || $fechaValida > new DateTime()) {
+        responderError('La fecha de nacimiento no es válida.', 422);
+    }
+    $edad = $fechaValida->diff(new DateTime())->y;
+    if ($edad < $edadMinima || $edad > $edadMaxima) {
+        responderError("La edad debe estar entre $edadMinima y $edadMaxima años.", 422);
+    }
+    return $fechaValida;
 }

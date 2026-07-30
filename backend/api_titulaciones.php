@@ -8,6 +8,11 @@ requerirSesionApi();
 
 $metodo = $_SERVER['REQUEST_METHOD'];
 
+// Ver titulaciones lo puede hacer cualquier rol logueado; crear/editar/borrar, solo el admin.
+if (in_array($metodo, ['POST', 'PUT', 'DELETE'], true)) {
+    requerirRolApi(['admin']);
+}
+
 function validarTitulacion(array $d, PDO $pdo, ?int $idExcluir = null): array
 {
     $nombre = normalizarTexto((string)($d['nombre'] ?? ''));

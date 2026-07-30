@@ -8,7 +8,7 @@ requerirRol(['admin']);
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestión de Matrículas</title>
+    <title>Gestión de Maestros</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="frontend/css/style.css">
 </head>
@@ -19,7 +19,7 @@ requerirRol(['admin']);
         <div id="content">
             <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4 p-3">
                 <div class="container-fluid">
-                    <span class="navbar-brand mb-0 h4 text-secondary">Gestión de Matrículas</span>
+                    <span class="navbar-brand mb-0 h4 text-secondary">Gestión de Maestros</span>
                     <a href="panel_principal.php" class="btn btn-outline-secondary btn-sm">&larr; Panel Principal</a>
                 </div>
             </nav>
@@ -29,24 +29,26 @@ requerirRol(['admin']);
 
                 <div class="card shadow-sm">
                     <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
-                        <span>Matrículas Registradas</span>
-                        <button id="btn-nuevo-matriculas" type="button" class="btn btn-guardar text-white btn-sm" onclick="abrirModalNuevo()">+ Nueva Matrícula</button>
+                        <span>Maestros Registrados</span>
+                        <button id="btn-nuevo-maestro" type="button" class="btn btn-guardar text-white btn-sm" onclick="abrirModalNuevo()">+ Nuevo Maestro</button>
                     </div>
                     <div class="card-body">
+                        <input type="text" id="buscador" class="form-control mb-3" placeholder="Buscar por cédula, nombre, apellido o correo...">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-azul">
                                     <tr>
                                         <th>ID</th>
-                                        <th>Alumno</th>
-                                        <th>Asignatura</th>
-                                        <th>Fecha</th>
-                                        <th>Estado</th>
+                                        <th>Cédula</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Correo</th>
+                                        <th>Especialidad</th>
                                         <th class="text-center">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabla-body">
-                                    <tr><td colspan="6" class="text-center text-secondary py-4">Cargando...</td></tr>
+                                    <tr><td colspan="7" class="text-center text-secondary py-4">Cargando...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -56,39 +58,44 @@ requerirRol(['admin']);
         </div>
     </div>
 
-    <div class="modal fade" id="modalMatricula" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="modalMaestro" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="form-matricula">
+                <form id="form-maestro">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalTitulo">Nueva Matrícula</h5>
+                        <h5 class="modal-title" id="modalTitulo">Nuevo Maestro</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" id="id_matricula">
+                        <input type="hidden" id="id_maestro">
                         <div class="mb-3">
-                            <label class="form-label">Alumno</label>
-                            <select id="id_alumno" class="form-select" required>
-                                <option value="">-- Seleccione --</option>
-                            </select>
+                            <label class="form-label">Cédula</label>
+                            <input type="text" id="cedula" class="form-control" required maxlength="10" minlength="10" pattern="\d{10}" title="10 dígitos numéricos" inputmode="numeric">
+                            <div id="cedula-error" class="form-text text-danger d-none"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Asignatura</label>
-                            <select id="id_asignatura" class="form-select" required>
-                                <option value="">-- Seleccione --</option>
-                            </select>
+                            <label class="form-label">Nombres</label>
+                            <input type="text" id="nombre" class="form-control" required maxlength="100">
+                            <div id="nombre-error" class="form-text text-danger d-none"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Fecha de Matrícula</label>
-                            <input type="date" id="fecha_matricula" class="form-control" required>
+                            <label class="form-label">Apellidos</label>
+                            <input type="text" id="apellido" class="form-control" required maxlength="100">
+                            <div id="apellido-error" class="form-text text-danger d-none"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Correo</label>
+                            <input type="email" id="correo" class="form-control" required maxlength="150">
+                            <div id="correo-error" class="form-text text-danger d-none"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" id="fecha_nacimiento" class="form-control" required>
+                            <div id="fecha_nacimiento-error" class="form-text text-danger d-none"></div>
                         </div>
                         <div class="mb-2">
-                            <label class="form-label">Estado</label>
-                            <select id="estado" class="form-select" required>
-                                <option value="Activa">Activa</option>
-                                <option value="Inactiva">Inactiva</option>
-                                <option value="Retirada">Retirada</option>
-                            </select>
+                            <label class="form-label">Especialidad</label>
+                            <input type="text" id="especialidad" class="form-control" maxlength="150" placeholder="Ej. Bases de Datos, Redes, etc.">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -103,7 +110,7 @@ requerirRol(['admin']);
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <script src="frontend/js/api-utils.js"></script>
 <script src="frontend/js/validaciones.js"></script>
-<script src="frontend/js/matriculas.js"></script>
+<script src="frontend/js/maestros.js"></script>
 <script>const ROL_USUARIO = "<?= htmlspecialchars($_SESSION['rol'] ?? '') ?>";</script>
 </body>
 </html>

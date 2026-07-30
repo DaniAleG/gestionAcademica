@@ -14,3 +14,15 @@ function requerirSesion(): void
         exit;
     }
 }
+
+/**
+ * Corta la ejecución y manda al panel principal si el rol de la sesión
+ * no está en la lista permitida. Debe llamarse DESPUÉS de requerirSesion().
+ */
+function requerirRol(array $rolesPermitidos): void
+{
+    if (!in_array($_SESSION['rol'] ?? '', $rolesPermitidos, true)) {
+        header("Location: panel_principal.php");
+        exit;
+    }
+}

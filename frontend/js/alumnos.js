@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', function () {
     modalAlumno = new bootstrap.Modal(document.getElementById('modalAlumno'));
     cargarAlumnos();
 
+    if (ROL_USUARIO !== 'admin') {
+        document.getElementById('btn-nuevo-alumno').style.display = 'none';
+    }
+    
     document.getElementById('form-alumno').addEventListener('submit', guardarAlumno);
 
     ['cedula', 'nombre', 'apellido', 'correo', 'fecha_nacimiento'].forEach(function (id) {
@@ -38,10 +42,12 @@ async function cargarAlumnos(busqueda = '') {
                 <td>${escapeHtml(a.apellido)}</td>
                 <td>${escapeHtml(a.correo)}</td>
                 <td>${escapeHtml(a.fecha_nacimiento)}</td>
+                ${ROL_USUARIO === 'admin' ? `
                 <td class="text-center acciones">
-                    <a href="#" class="editar" onclick="abrirModalEditar(${a.id_alumno}, ${JSON.stringify(a).replace(/"/g, '&quot;')}); return false;">Editar</a>
-                    <a href="#" class="eliminar" onclick="eliminarAlumno(${a.id_alumno}); return false;">Eliminar</a>
+                        <a href="#" class="editar" onclick="abrirModalEditar(${a.id_alumno}, ${JSON.stringify(a).replace(/"/g, '&quot;')}); return false;">Editar</a>
+                        <a href="#" class="eliminar" onclick="eliminarAlumno(${a.id_alumno}); return false;">Eliminar</a>
                 </td>
+                ` : ''}
             </tr>
         `).join('');
     } catch (err) {

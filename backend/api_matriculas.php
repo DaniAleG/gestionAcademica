@@ -6,8 +6,14 @@ require_once __DIR__ . '/includes/api_helpers.php';
 require_once __DIR__ . '/conexion.php';
 requerirSesionApi();
 
+
 $metodo = $_SERVER['REQUEST_METHOD'];
 $estadosValidos = ['Activa', 'Inactiva', 'Retirada'];
+
+// Matricular, editar o borrar: solo el administrador.
+if (in_array($metodo, ['POST', 'PUT', 'DELETE'], true)) {
+    requerirRolApi(['admin']);
+}
 
 function validarMatricula(array $d, array $estadosValidos): array
 {
@@ -36,13 +42,28 @@ function validarMatricula(array $d, array $estadosValidos): array
 
 try {
     if ($metodo === 'GET') {
-        $stmt = $pdo->query("SELECT m.id_matricula, m.id_alumno, m.id_asignatura, m.fecha_matricula, m.estado,
-                                     CONCAT(al.nombre, ' ', al.apellido) AS nombre_alumno,
-                                     asg.nombre AS nombre_asignatura
-                              FROM matricula m
-                              INNER JOIN alumno al ON m.id_alumno = al.id_alumno
-                              INNER JOIN asignatura asg ON m.id_asignatura = asg.id_asignatura
-                              ORDER BY m.id_matricula DESC");
+        $sql = "SELECT m.id_matricula, m.id_alumno, m.id_asignatura, m.fecha_matricula, m.estado,
+                       CONCAT(al.nombre, ' ', al.apellido) AS nombre_alumno,
+                       asg.nombre AS nombre_asignatura
+                FROM matricula m
+                INNER JOIN alumno al ON m.id_alumno = al.id_alumno
+                INNER JOIN asignatura asg ON m.id_asignatura = asg.id_asignatura";
+        $params = [];
+        $rol = $_SESSION['rol'] ?? '';
+
+        if ($rol === 'alumno') {
+            // Un alumno solo ve sus propias matrículas.
+            $sql .= ' WHERE m.id_alumno = :id_alumno';
+            $params[':id_alumno'] = (int)($_SESSION['id_alumno'] ?? 0);
+        } elseif ($rol === 'maestro') {
+            // Un maestro solo ve las matrículas de las asignaturas que él dicta.
+            $sql .= ' WHERE asg.id_maestro = :id_maestro';
+            $params[':id_maestro'] = (int)($_SESSION['id_maestro'] ?? 0);
+        }
+
+        $sql .= ' ORDER BY m.id_matricula DESC';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
         responderExito($stmt->fetchAll());
     }
 

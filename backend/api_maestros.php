@@ -6,16 +6,16 @@ require_once __DIR__ . '/includes/api_helpers.php';
 require_once __DIR__ . '/conexion.php';
 requerirSesionApi();
 
-
 $metodo = $_SERVER['REQUEST_METHOD'];
 
-function validarAlumno(array $d, PDO $pdo, ?int $idExcluir = null): array
+function validarMaestro(array $d, PDO $pdo, ?int $idExcluir = null): array
 {
     $cedula = preg_replace('/\D+/', '', (string)($d['cedula'] ?? '')) ?? '';
     $nombre = normalizarNombre((string)($d['nombre'] ?? ''));
     $apellido = normalizarNombre((string)($d['apellido'] ?? ''));
     $correo = trim((string)($d['correo'] ?? ''));
     $fecha_nacimiento = trim((string)($d['fecha_nacimiento'] ?? ''));
+    $especialidad = normalizarTexto((string)($d['especialidad'] ?? ''));
 
     if ($cedula === '' || $nombre === '' || $apellido === '' || $correo === '' || $fecha_nacimiento === '') {
         responderError('Todos los campos son obligatorios.', 422);
@@ -35,18 +35,12 @@ function validarAlumno(array $d, PDO $pdo, ?int $idExcluir = null): array
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
         responderError('El correo electrónico no es válido.', 422);
     }
-    $fechaValida = DateTime::createFromFormat('Y-m-d', $fecha_nacimiento);
-    if (!$fechaValida || $fechaValida > new DateTime()) {
-        responderError('La fecha de nacimiento no es válida.', 422);
-    }
-    $edad = $fechaValida->diff(new DateTime())->y;
-    if ($edad < 16 || $edad > 100) {
-        responderError('La edad del alumno debe estar entre 16 y 100 años.', 422);
-    }
+    // Un maestro necesita ser mayor de edad y estar en un rango laboral razonable.
+    validarFechaNacimiento($fecha_nacimiento, 21, 75);
 
-    $sql = 'SELECT id_alumno FROM alumno WHERE (cedula = :cedula OR correo = :correo)';
+    $sql = 'SELECT id_maestro FROM maestro WHERE (cedula = :cedula OR correo = :correo)';
     if ($idExcluir !== null) {
-        $sql .= ' AND id_alumno <> :id';
+        $sql .= ' AND id_maestro <> :id';
     }
     $stmt = $pdo->prepare($sql);
     $stmt->bindValue(':cedula', $cedula);
@@ -56,67 +50,61 @@ function validarAlumno(array $d, PDO $pdo, ?int $idExcluir = null): array
     }
     $stmt->execute();
     if ($stmt->fetch()) {
-        responderError('Ya existe un alumno con esa cédula o correo.', 409);
+        responderError('Ya existe un maestro con esa cédula o correo.', 409);
     }
 
-    return compact('cedula', 'nombre', 'apellido', 'correo', 'fecha_nacimiento');
+    return compact('cedula', 'nombre', 'apellido', 'correo', 'fecha_nacimiento', 'especialidad');
 }
 
 try {
     if ($metodo === 'GET') {
-        // Un alumno solo puede ver su propio registro, nunca la lista completa.
-        if (($_SESSION['rol'] ?? '') === 'alumno') {
-            $idPropio = (int)($_SESSION['id_alumno'] ?? 0);
-            $stmt = $pdo->prepare('SELECT id_alumno, cedula, nombre, apellido, correo, fecha_nacimiento FROM alumno WHERE id_alumno = :id');
-            $stmt->execute([':id' => $idPropio]);
-            responderExito($stmt->fetchAll());
-        }
-
+        // Cualquier rol logueado puede ver la lista de maestros (se usa, por ejemplo,
+        // para el selector de "maestro asignado" al crear una asignatura).
         $busqueda = trim((string)($_GET['q'] ?? ''));
         if ($busqueda === '') {
-            $stmt = $pdo->query('SELECT id_alumno, cedula, nombre, apellido, correo, fecha_nacimiento FROM alumno ORDER BY id_alumno DESC');
+            $stmt = $pdo->query('SELECT id_maestro, cedula, nombre, apellido, correo, fecha_nacimiento, especialidad FROM maestro ORDER BY id_maestro DESC');
         } else {
-            $stmt = $pdo->prepare("SELECT id_alumno, cedula, nombre, apellido, correo, fecha_nacimiento FROM alumno
+            $stmt = $pdo->prepare("SELECT id_maestro, cedula, nombre, apellido, correo, fecha_nacimiento, especialidad FROM maestro
                                     WHERE cedula ILIKE :b OR nombre ILIKE :b OR apellido ILIKE :b OR correo ILIKE :b
-                                    ORDER BY id_alumno DESC");
+                                    ORDER BY id_maestro DESC");
             $stmt->execute([':b' => '%' . $busqueda . '%']);
         }
         responderExito($stmt->fetchAll());
     }
 
-    // Crear, editar y borrar alumnos: solo el administrador.
+    // Crear, editar y borrar maestros: solo el administrador.
     requerirRolApi(['admin']);
 
     if ($metodo === 'POST') {
-        $d = validarAlumno(leerJsonBody(), $pdo);
-        $stmt = $pdo->prepare('INSERT INTO alumno (cedula, nombre, apellido, correo, fecha_nacimiento)
-                                VALUES (:cedula, :nombre, :apellido, :correo, :fecha_nacimiento) RETURNING id_alumno');
+        $d = validarMaestro(leerJsonBody(), $pdo);
+        $stmt = $pdo->prepare('INSERT INTO maestro (cedula, nombre, apellido, correo, fecha_nacimiento, especialidad)
+                                VALUES (:cedula, :nombre, :apellido, :correo, :fecha_nacimiento, :especialidad) RETURNING id_maestro');
         $stmt->execute($d);
-        responderExito(['id_alumno' => $stmt->fetchColumn()], 'Alumno registrado correctamente.');
+        responderExito(['id_maestro' => $stmt->fetchColumn()], 'Maestro registrado correctamente.');
     }
 
     if ($metodo === 'PUT') {
         $body = leerJsonBody();
-        $id = (int)($body['id_alumno'] ?? 0);
+        $id = (int)($body['id_maestro'] ?? 0);
         if ($id <= 0) {
-            responderError('ID de alumno inválido.', 400);
+            responderError('ID de maestro inválido.', 400);
         }
-        $d = validarAlumno($body, $pdo, $id);
+        $d = validarMaestro($body, $pdo, $id);
         $d['id'] = $id;
-        $stmt = $pdo->prepare('UPDATE alumno SET cedula = :cedula, nombre = :nombre, apellido = :apellido,
-                                correo = :correo, fecha_nacimiento = :fecha_nacimiento WHERE id_alumno = :id');
+        $stmt = $pdo->prepare('UPDATE maestro SET cedula = :cedula, nombre = :nombre, apellido = :apellido,
+                                correo = :correo, fecha_nacimiento = :fecha_nacimiento, especialidad = :especialidad WHERE id_maestro = :id');
         $stmt->execute($d);
-        responderExito([], 'Alumno actualizado correctamente.');
+        responderExito([], 'Maestro actualizado correctamente.');
     }
 
     if ($metodo === 'DELETE') {
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) {
-            responderError('ID de alumno inválido.', 400);
+            responderError('ID de maestro inválido.', 400);
         }
-        $stmt = $pdo->prepare('DELETE FROM alumno WHERE id_alumno = :id');
+        $stmt = $pdo->prepare('DELETE FROM maestro WHERE id_maestro = :id');
         $stmt->execute([':id' => $id]);
-        responderExito([], 'Alumno eliminado correctamente.');
+        responderExito([], 'Maestro eliminado correctamente.');
     }
 
     responderError('Método no permitido.', 405);

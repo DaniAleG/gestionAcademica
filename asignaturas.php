@@ -2,6 +2,7 @@
 session_start();
 require_once 'includes/helpers.php';
 requerirSesion();
+requerirRol(['admin']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -29,7 +30,7 @@ requerirSesion();
                 <div class="card shadow-sm">
                     <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
                         <span>Asignaturas Registradas</span>
-                        <button type="button" class="btn btn-guardar text-white btn-sm" onclick="abrirModalNuevo()">+ Nueva Asignatura</button>
+                        <button id= "btn-nuevo-asignatura" type="button" class="btn btn-guardar text-white btn-sm" onclick="abrirModalNuevo()">+ Nueva Asignatura</button>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -40,11 +41,12 @@ requerirSesion();
                                         <th>Asignatura</th>
                                         <th>Créditos</th>
                                         <th>Titulación</th>
+                                        <th>Maestro</th>
                                         <th class="text-center">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabla-body">
-                                    <tr><td colspan="5" class="text-center text-secondary py-4">Cargando...</td></tr>
+                                    <tr><td colspan="6" class="text-center text-secondary py-4">Cargando...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -78,6 +80,12 @@ requerirSesion();
                                 <option value="">-- Seleccione --</option>
                             </select>
                         </div>
+                        <div class="mb-2">
+                            <label class="form-label">Maestro asignado <span class="text-muted">(opcional)</span></label>
+                            <select id="id_maestro" class="form-select">
+                                <option value="">-- Sin asignar --</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -92,5 +100,6 @@ requerirSesion();
 <script src="frontend/js/api-utils.js"></script>
 <script src="frontend/js/validaciones.js"></script>
 <script src="frontend/js/asignaturas.js"></script>
+<script>const ROL_USUARIO = "<?= htmlspecialchars($_SESSION['rol'] ?? '') ?>";</script>
 </body>
 </html>

@@ -35,7 +35,16 @@ requerirSesion();
                         <div class="card shadow-sm border-0 card-acento">
                             <div class="card-body py-5 text-center">
                                 <h2 style="color: var(--azul-oscuro);">Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario']); ?></h2>
-                                <p class="text-muted fs-5 mt-3">Selecciona una opción del menú lateral para comenzar a gestionar los registros.</p>
+                                <?php $rolActual = $_SESSION['rol'] ?? ''; ?>
+                                <?php if ($rolActual === 'admin'): ?>
+                                    <p class="text-muted fs-5 mt-3">Selecciona una opción del menú lateral para comenzar a gestionar los registros.</p>
+                                <?php elseif ($rolActual === 'maestro'): ?>
+                                    <p class="text-muted fs-5 mt-3">Desde <strong>Mis Cursos</strong> puedes ver a tus alumnos y registrar sus calificaciones.</p>
+                                    <a href="mis_cursos.php" class="btn btn-guardar text-white mt-2">Ir a Mis Cursos</a>
+                                <?php elseif ($rolActual === 'alumno'): ?>
+                                    <p class="text-muted fs-5 mt-3">Desde <strong>Mis Materias</strong> puedes ver tus calificaciones y si aprobaste cada materia.</p>
+                                    <a href="mis_materias.php" class="btn btn-guardar text-white mt-2">Ir a Mis Materias</a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

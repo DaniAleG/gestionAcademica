@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
     modalMatricula = new bootstrap.Modal(document.getElementById('modalMatricula'));
     cargarSelects();
     cargarMatriculas();
+    if (ROL_USUARIO !== 'admin') {
+        document.getElementById('btn-nuevo-matriculas').style.display = 'none';
+    }
     document.getElementById('form-matricula').addEventListener('submit', guardarMatricula);
 });
 
@@ -44,10 +47,12 @@ async function cargarMatriculas() {
                 <td>${escapeHtml(m.nombre_asignatura)}</td>
                 <td>${escapeHtml(m.fecha_matricula)}</td>
                 <td><span class="badge ${BADGE_ESTADO[m.estado] || 'bg-secondary'}">${escapeHtml(m.estado)}</span></td>
+                ${ROL_USUARIO === 'admin' ? `
                 <td class="text-center acciones">
                     <a href="#" class="editar" onclick='abrirModalEditar(${m.id_matricula}, ${JSON.stringify(m)}); return false;'>Editar</a>
                     <a href="#" class="eliminar" onclick="eliminarMatricula(${m.id_matricula}); return false;">Eliminar</a>
                 </td>
+                ` : ''}
             </tr>
         `).join('');
     } catch (err) {

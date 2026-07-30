@@ -22,31 +22,52 @@ $paginaActual = basename($_SERVER['SCRIPT_NAME']);
                 🏠 Inicio
             </a>
         </li>
-        <li class="nav-item mb-2">
-            <a href="alumnos.php" class="nav-link menu-item <?php echo $paginaActual === 'alumnos.php' ? 'activo' : ''; ?>">
-                🧑‍🎓 Alumnos
-            </a>
-        </li>
-        <li class="nav-item mb-2">
-            <a href="titulaciones.php" class="nav-link menu-item <?php echo $paginaActual === 'titulaciones.php' ? 'activo' : ''; ?>">
-                🎓 Titulaciones
-            </a>
-        </li>
-        <li class="nav-item mb-2">
-            <a href="asignaturas.php" class="nav-link menu-item <?php echo $paginaActual === 'asignaturas.php' ? 'activo' : ''; ?>">
-                📚 Asignaturas
-            </a>
-        </li>
-        <li class="nav-item mb-2">
-            <a href="matriculas.php" class="nav-link menu-item <?php echo $paginaActual === 'matriculas.php' ? 'activo' : ''; ?>">
-                📝 Matrículas
-            </a>
-        </li>
-        <li class="nav-item mb-2">
-            <a href="convocatorias.php" class="nav-link menu-item <?php echo $paginaActual === 'convocatorias.php' ? 'activo' : ''; ?>">
-                📅 Convocatorias
-            </a>
-        </li>
+        <?php $rolActual = $_SESSION['rol'] ?? ''; ?>
+
+        <?php if ($rolActual === 'admin'): ?>
+            <li class="nav-item mb-2">
+                <a href="alumnos.php" class="nav-link menu-item <?php echo $paginaActual === 'alumnos.php' ? 'activo' : ''; ?>">
+                    🧑‍🎓 Alumnos
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="maestros.php" class="nav-link menu-item <?php echo $paginaActual === 'maestros.php' ? 'activo' : ''; ?>">
+                    🧑‍🏫 Maestros
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="titulaciones.php" class="nav-link menu-item <?php echo $paginaActual === 'titulaciones.php' ? 'activo' : ''; ?>">
+                    🎓 Titulaciones
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="asignaturas.php" class="nav-link menu-item <?php echo $paginaActual === 'asignaturas.php' ? 'activo' : ''; ?>">
+                    📚 Asignaturas
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="matriculas.php" class="nav-link menu-item <?php echo $paginaActual === 'matriculas.php' ? 'activo' : ''; ?>">
+                    📝 Matrículas
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="convocatorias.php" class="nav-link menu-item <?php echo $paginaActual === 'convocatorias.php' ? 'activo' : ''; ?>">
+                    📅 Convocatorias
+                </a>
+            </li>
+        <?php elseif ($rolActual === 'maestro'): ?>
+            <li class="nav-item mb-2">
+                <a href="mis_cursos.php" class="nav-link menu-item <?php echo $paginaActual === 'mis_cursos.php' ? 'activo' : ''; ?>">
+                    📚 Mis Cursos
+                </a>
+            </li>
+        <?php elseif ($rolActual === 'alumno'): ?>
+            <li class="nav-item mb-2">
+                <a href="mis_materias.php" class="nav-link menu-item <?php echo $paginaActual === 'mis_materias.php' ? 'activo' : ''; ?>">
+                    📖 Mis Materias
+                </a>
+            </li>
+        <?php endif; ?>
     </ul>
 
     <hr>

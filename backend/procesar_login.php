@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     try {
-        $sql = "SELECT id_usuario, usuario, password, rol FROM usuarios WHERE usuario = :usuario";
+        $sql = "SELECT id_usuario, usuario, password, rol, id_alumno, id_maestro FROM usuarios WHERE usuario = :usuario";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':usuario', $usuario_ingresado, PDO::PARAM_STR);
         $stmt->execute();
@@ -24,6 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['id_usuario'] = $usuario_db['id_usuario'];
             $_SESSION['usuario'] = $usuario_db['usuario'];
             $_SESSION['rol'] = $usuario_db['rol'];
+            $_SESSION['id_alumno'] = $usuario_db['id_alumno'] !== null ? (int)$usuario_db['id_alumno'] : null;
+            $_SESSION['id_maestro'] = $usuario_db['id_maestro'] !== null ? (int)$usuario_db['id_maestro'] : null;
 
             header("Location: ../panel_principal.php");
             exit;

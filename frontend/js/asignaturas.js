@@ -1,12 +1,18 @@
 const API_ASIGNATURAS = 'backend/api_asignaturas.php';
 const API_TITULACIONES_LISTA = 'backend/api_titulaciones.php';
+const API_MAESTROS_LISTA = 'backend/api_maestros.php';
 let modalAsignatura;
 let titulacionesCache = [];
 
 document.addEventListener('DOMContentLoaded', function () {
     modalAsignatura = new bootstrap.Modal(document.getElementById('modalAsignatura'));
     cargarTitulacionesEnSelect();
+    cargarMaestrosEnSelect();
     cargarAsignaturas();
+
+    if (ROL_USUARIO !== 'admin') {
+        document.getElementById('btn-nuevo-asignatura').style.display = 'none';
+    }
     document.getElementById('form-asignatura').addEventListener('submit', guardarAsignatura);
 });
 
@@ -21,12 +27,23 @@ async function cargarTitulacionesEnSelect() {
     }
 }
 
+async function cargarMaestrosEnSelect() {
+    try {
+        const maestros = await apiGet(API_MAESTROS_LISTA);
+        const select = document.getElementById('id_maestro');
+        select.innerHTML = '<option value="">-- Sin asignar --</option>' +
+            maestros.map(m => `<option value="${m.id_maestro}">${escapeHtml(m.nombre + ' ' + m.apellido)}</option>`).join('');
+    } catch (err) {
+        mostrarMensaje('No se pudieron cargar los maestros: ' + err.message, 'danger');
+    }
+}
+
 async function cargarAsignaturas() {
     const tbody = document.getElementById('tabla-body');
     try {
         const asignaturas = await apiGet(API_ASIGNATURAS);
         if (asignaturas.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-secondary py-4">No hay asignaturas registradas.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary py-4">No hay asignaturas registradas.</td></tr>';
             return;
         }
         tbody.innerHTML = asignaturas.map(a => `
@@ -35,14 +52,17 @@ async function cargarAsignaturas() {
                 <td>${escapeHtml(a.nombre)}</td>
                 <td>${a.creditos}</td>
                 <td>${escapeHtml(a.nombre_titulacion)}</td>
+                <td>${escapeHtml(a.nombre_maestro || 'Sin asignar')}</td>
+                ${ROL_USUARIO === 'admin' ? `
                 <td class="text-center acciones">
                     <a href="#" class="editar" onclick='abrirModalEditar(${a.id_asignatura}, ${JSON.stringify(a)}); return false;'>Editar</a>
                     <a href="#" class="eliminar" onclick="eliminarAsignatura(${a.id_asignatura}); return false;">Eliminar</a>
                 </td>
+                ` : ''}
             </tr>
         `).join('');
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">${err.message}</td></tr>`;
     }
 }
 
@@ -62,6 +82,7 @@ function abrirModalEditar(id, a) {
     document.getElementById('nombre').value = a.nombre;
     document.getElementById('creditos').value = a.creditos;
     document.getElementById('id_titulacion').value = a.id_titulacion;
+    document.getElementById('id_maestro').value = a.id_maestro || '';
     document.getElementById('modalTitulo').textContent = 'Editar Asignatura';
     modalAsignatura.show();
 }
@@ -74,6 +95,7 @@ async function guardarAsignatura(evento) {
         nombre: document.getElementById('nombre').value.trim(),
         creditos: document.getElementById('creditos').value,
         id_titulacion: document.getElementById('id_titulacion').value,
+        id_maestro: document.getElementById('id_maestro').value || null,
     };
     try {
         const respuesta = await apiEnviar(API_ASIGNATURAS, id ? 'PUT' : 'POST', cuerpo);

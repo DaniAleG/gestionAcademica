@@ -6,8 +6,14 @@ require_once __DIR__ . '/includes/api_helpers.php';
 require_once __DIR__ . '/conexion.php';
 requerirSesionApi();
 
+
 $metodo = $_SERVER['REQUEST_METHOD'];
 $tiposValidos = ['Parcial', 'Final', 'Supletorio'];
+
+// Ver convocatorias lo puede hacer cualquier rol logueado; crear/editar/borrar, solo el admin.
+if (in_array($metodo, ['POST', 'PUT', 'DELETE'], true)) {
+    requerirRolApi(['admin']);
+}
 
 function validarConvocatoria(array $d, array $tiposValidos): array
 {
@@ -23,6 +29,13 @@ function validarConvocatoria(array $d, array $tiposValidos): array
     }
     if (!in_array($tipo, $tiposValidos, true)) {
         responderError('El tipo de evaluación no es válido.', 422);
+    }
+    $fechaExamenValida = DateTime::createFromFormat('Y-m-d', $fecha_examen);
+    if (!$fechaExamenValida) {
+        responderError('La fecha de examen no es válida.', 422);
+    }
+    if ($fechaExamenValida < new DateTime('today')) {
+        responderError('La fecha de examen no puede ser una fecha pasada.', 422);
     }
 
     return ['id_asignatura' => (int)$id_asignatura, 'fecha_examen' => $fecha_examen, 'tipo' => $tipo];
